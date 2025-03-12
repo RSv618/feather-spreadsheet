@@ -492,6 +492,7 @@ class MainWindow(QMainWindow):
             data = self.model.get_data()
             feather.write_feather(data, file_path)
             self.current_file = file_path
+            self.model._original_data = data.copy()  # Update original data
             self.setWindowTitle(f"Feather Spreadsheet - {os.path.basename(file_path)}")
             self.statusBar.showMessage(f"Saved to: {file_path}", 5000)
         except Exception as e:
@@ -755,6 +756,35 @@ class MainWindow(QMainWindow):
             self.find_text(text)
         else:
             self.statusBar.showMessage(f"Text '{text}' not found", 3000)
+
+    def has_unsaved_changes(self):
+        if self.model is None:
+            return False
+        return not self.model._data.equals(self.model._original_data)
+
+    def closeEvent(self, event):
+        if self.has_unsaved_changes():
+            reply = QMessageBox.question(
+                self,
+                "Unsaved Changes",
+                "There are unsaved changes. Do you want to save before exiting?",
+                QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel,
+                QMessageBox.Save
+            )
+
+            if reply == QMessageBox.Save:
+                self.save_file()
+                if self.has_unsaved_changes():  # Save was cancelled
+                    event.ignore()
+                    return
+                else:
+                    event.accept()
+            elif reply == QMessageBox.Discard:
+                event.accept()
+            else:  # Cancel
+                event.ignore()
+        else:
+            event.accept()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
