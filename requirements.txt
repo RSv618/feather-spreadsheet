@@ -1,0 +1,4 @@
+pyarrow~=19.0.1
+pandas~=2.2.3
+PyQt5~=5.15.11
+pyinstaller~=6.12.0
