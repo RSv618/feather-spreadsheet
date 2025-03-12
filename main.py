@@ -10,6 +10,14 @@ from PyQt5.QtWidgets import (
     QVBoxLayout, QHBoxLayout, QPushButton, QWidget)
 from PyQt5.QtGui import QIcon
 
+# Determine the base path
+if getattr(sys, 'frozen', False):  # Running as PyInstaller executable
+    BASE_PATH = sys._MEIPASS  # Temporary folder where files are extracted
+else:
+    BASE_PATH = os.path.dirname(__file__)  # Script directory during development
+
+# Construct the full path to logo.ico
+ICON_PATH = os.path.join(BASE_PATH, "logo.ico")
 
 class TableModel(QtCore.QAbstractTableModel):
     def __init__(self, data):
@@ -151,7 +159,6 @@ class ChangeDataTypeDialog(QDialog):
     def __init__(self, current_type, parent=None):
         super().__init__(parent)
         self.setWindowTitle("Change Column Data Type")
-        self.resize(300, 150)
 
         layout = QVBoxLayout()
 
@@ -252,12 +259,12 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle("Feather File Spreadsheet")
-        self.resize(600, 400)
+        self.setWindowTitle("Feather Spreadsheet")
+        self.resize(300, 200)
 
         # Set application icon if available
-        if os.path.exists(get_icon_path()):
-            self.setWindowIcon(QIcon(get_icon_path()))
+        if os.path.exists(ICON_PATH):
+            self.setWindowIcon(QIcon(ICON_PATH))
 
         # Apply light mode at the start
         self.dark_mode = False
@@ -420,9 +427,39 @@ class MainWindow(QMainWindow):
             self.model = TableModel(data)
             self.table.setModel(self.model)
             self.current_file = file_path
-            self.setWindowTitle(f"Feather File Spreadsheet - {os.path.basename(file_path)}")
+            self.setWindowTitle(f"Feather Spreadsheet - {os.path.basename(file_path)}")
             self.statusBar.showMessage(f"Loaded file: {file_path}", 5000)
             self.show_table()
+
+            # Auto-resize columns to content
+            self.table.resizeColumnsToContents()
+
+            # Calculate appropriate window size
+            screen_geo = QApplication.primaryScreen().availableGeometry()
+
+            # Calculate width components
+            vertical_header_width = self.table.verticalHeader().width()
+            columns_width = sum(self.table.columnWidth(i) for i in range(self.model.columnCount()))
+            total_width = vertical_header_width + columns_width + 30  # Add margins/scrollbar
+
+            # Set reasonable width limits
+            max_width = int(screen_geo.width() * 0.8)
+            desired_width = min(total_width, max_width)
+
+            # Calculate height components
+            header_height = self.table.horizontalHeader().height()
+            row_height = self.table.rowHeight(0) if self.model.rowCount() > 0 else 30
+            visible_rows = min(20, self.model.rowCount())
+            total_height = header_height + (row_height * visible_rows) + 120  # Add UI margins
+
+            # Set reasonable height limits
+            max_height = int(screen_geo.height() * 0.7)
+            desired_height = min(total_height, max_height)
+
+            # Apply new window size
+            self.resize(desired_width, desired_height)
+            self.table.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+            self.table.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Failed to open file: {str(e)}")
 
@@ -455,7 +492,7 @@ class MainWindow(QMainWindow):
             data = self.model.get_data()
             feather.write_feather(data, file_path)
             self.current_file = file_path
-            self.setWindowTitle(f"Feather File Spreadsheet - {os.path.basename(file_path)}")
+            self.setWindowTitle(f"Feather Spreadsheet - {os.path.basename(file_path)}")
             self.statusBar.showMessage(f"Saved to: {file_path}", 5000)
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Failed to save file: {str(e)}")
@@ -554,13 +591,21 @@ class MainWindow(QMainWindow):
         # Create and apply light mode style sheet with slightly darker headers
         light_style = """
         QTableView {
-            gridline-color: #d0d0d0;
+            border: 1px solid #B2B2B2;
         }
         QHeaderView::section {
-            background-color: #e6e6e6;
+            background-color: #E6E6E6;
+            border-bottom: 1px solid #B2B2B2;
+            border-top: none;
+            border-right: 1px solid #B2B2B2;
+            border-left: none;
         }
         QTableView QTableCornerButton::section {
-            background-color: #e6e6e6;
+            background-color: #E6E6E6;
+            border-top: none;
+            border-left: none;
+            border-right: 1px solid #B2B2B2;
+            border-bottom: 1px solid #B2B2B2;
         }
         """
         self.setStyleSheet(light_style)
@@ -708,22 +753,12 @@ class MainWindow(QMainWindow):
         else:
             self.statusBar.showMessage(f"Text '{text}' not found", 3000)
 
-def get_icon_path():
-    # Determine the base path
-    if getattr(sys, 'frozen', False):  # Running as PyInstaller executable
-        base_path = sys._MEIPASS  # Temporary folder where files are extracted
-    else:
-        base_path = os.path.dirname(__file__)  # Script directory during development
-
-    # Construct the full path to logo.ico
-    return os.path.join(base_path, "logo.ico")
-
 if __name__ == "__main__":
     app = QApplication(sys.argv)
 
     # Set application icon
-    if os.path.exists(get_icon_path()):
-        app.setWindowIcon(QIcon(get_icon_path()))
+    if os.path.exists(ICON_PATH):
+        app.setWindowIcon(QIcon(ICON_PATH))
 
     window = MainWindow()
     window.show()
