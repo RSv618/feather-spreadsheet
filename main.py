@@ -625,6 +625,9 @@ class MainWindow(QMainWindow):
                 selection-background-color: #3a3a5a;
                 selection-color: white;
             }
+            QTableView QTableCornerButton::section {
+                background-color: #3a3a3a;
+            }
             QHeaderView::section {
                 background-color: #3a3a3a;
                 color: #e0e0e0;

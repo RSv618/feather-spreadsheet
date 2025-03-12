@@ -4,9 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="37271566-21e7-4e13-94c3-d8be8b96f848" name="Changes" comment="Added README.md">
+    <list default="true" id="37271566-21e7-4e13-94c3-d8be8b96f848" name="Changes" comment="light_mode style improvements">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -108,12 +107,21 @@
       <option name="project" value="LOCAL" />
       <updated>1741773704832</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="light_mode style improvements">
+      <option name="closed" value="true" />
+      <created>1741787439815</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1741787439815</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Initial commit" />
     <MESSAGE value="Added README.md" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added README.md" />
+    <MESSAGE value="light_mode style improvements" />
+    <option name="LAST_COMMIT_MESSAGE" value="light_mode style improvements" />
   </component>
 </project>
