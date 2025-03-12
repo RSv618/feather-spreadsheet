@@ -252,7 +252,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle("Feather File Viewer")
+        self.setWindowTitle("Feather File Spreadsheet")
         self.resize(600, 400)
 
         # Set application icon if available
@@ -420,7 +420,7 @@ class MainWindow(QMainWindow):
             self.model = TableModel(data)
             self.table.setModel(self.model)
             self.current_file = file_path
-            self.setWindowTitle(f"Feather File Viewer - {os.path.basename(file_path)}")
+            self.setWindowTitle(f"Feather File Spreadsheet - {os.path.basename(file_path)}")
             self.statusBar.showMessage(f"Loaded file: {file_path}", 5000)
             self.show_table()
         except Exception as e:
@@ -455,7 +455,7 @@ class MainWindow(QMainWindow):
             data = self.model.get_data()
             feather.write_feather(data, file_path)
             self.current_file = file_path
-            self.setWindowTitle(f"Feather File Viewer - {os.path.basename(file_path)}")
+            self.setWindowTitle(f"Feather File Spreadsheet - {os.path.basename(file_path)}")
             self.statusBar.showMessage(f"Saved to: {file_path}", 5000)
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Failed to save file: {str(e)}")
