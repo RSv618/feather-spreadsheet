@@ -1,2 +1,0 @@
-run command at terminal:
-pyinstaller --onefile --noconsole --clean --icon "logo.ico" --add-data "logo.ico;." main.py
